@@ -1,0 +1,115 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Bank Account Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Bank Account Management</h1>
+
+        <!-- Formulario de Creación de Cuenta -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Create Account</h2>
+            </div>
+            <div class="card-body">
+                <form id="createAccountForm">
+                    <div class="form-group">
+                        <label>Active Card:</label>
+                        <input type="checkbox" id="activeCard" name="activeCard" checked class="form-check-input ml-2">
+                    </div>
+                    <div class="form-group">
+                        <label>Available Limit:</label>
+                        <input type="number" id="availableLimit" name="availableLimit" placeholder="Enter limit" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Formulario de Transacciones -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Submit Transaction</h2>
+            </div>
+            <div class="card-body">
+                <form id="transactionForm" style="display:none;">
+                    <div class="form-group">
+                        <label>Merchant:</label>
+                        <input type="text" id="merchant" name="merchant" placeholder="Enter merchant" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount:</label>
+                        <input type="number" id="amount" name="amount" placeholder="Enter amount" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Time:</label>
+                        <input type="datetime-local" id="time" name="time" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit Transaction</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+       
+       $('#createAccountForm').submit(function(event) {
+            event.preventDefault();
+            const activeCard = $('#activeCard').is(':checked');
+            const availableLimit = $('#availableLimit').val();
+
+            $.ajax({
+                url: 'http://localhost:3000/create-account',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ activeCard, availableLimit }),
+                success: function(data) {
+                    console.log(data);
+                    $('#transactionForm').show(); 
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                   
+                    console.log(jqXHR.responseText);
+                }
+            });
+        });
+
+
+        $('#transactionForm').submit(function(event) {
+            event.preventDefault();
+            const merchant = $('#merchant').val();
+            const amount = $('#amount').val();
+            const time = $('#time').val();
+
+            $.ajax({
+                url: 'http://localhost:3000/transaction',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    transaction: { 
+                        merchant: merchant,
+                        amount: amount,
+                        time: time
+                    }
+                }),
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                }
+            });
+        });
+
+</script>
+
+
+
