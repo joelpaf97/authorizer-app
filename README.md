@@ -17,7 +17,10 @@ Before launching the application, you need to install the required dependencies.
 Open a terminal in your project directory and run the following command:
 
 npm install
-npm install express
+
+When the installation finished, run the next command:
+
+npm install Express
 
 *Starting the Application*
 
