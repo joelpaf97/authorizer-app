@@ -20,7 +20,7 @@ npm install
 
 When the installation finished, run the next command:
 
-npm install Express
+npm install express
 
 *Starting the Application*
 
