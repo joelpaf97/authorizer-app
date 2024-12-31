@@ -9,11 +9,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'Public')));
 
 
-let account = null; // Almacena la información de la cuenta bancaria.
-let transactions = []; // Almacena ñas transacciones
+let account = null; // Stores the bank account information.
+let transactions = []; // Stores the transactions.
 
 
-// Function para detectar transacciones Frecuentes
+// Function to detect frequent transactions.
 function checkFrequency(transaction) {
    
     const transactionTime = new Date(transaction.time);
@@ -32,7 +32,7 @@ function checkFrequency(transaction) {
     return recentTransactions.length >= 3;  
 }
 
-// Function para detectar transacciones duplicadas
+// Function to detect duplicate transactions.
 function checkDoubledTransaction(merchant, amount, time) {
     const transactionTime = new Date(time);
     const twoMinutesAgo = new Date(transactionTime.getTime() - 2 * 60 * 1000); // Dos minutos antes
@@ -47,7 +47,7 @@ function checkDoubledTransaction(merchant, amount, time) {
 }
 
 
-// Endpoint para crear cuenta
+// Endpoint to create an account.
 app.post('/create-account', (req, res) => {
    
     if (account) {
@@ -68,8 +68,7 @@ app.post('/create-account', (req, res) => {
 
 
 
-
-// Endpoint para procesar transacciones
+// Endpoint to process transactions.
 app.post('/transaction', (req, res) => {
 
     if (!account) {
@@ -82,31 +81,31 @@ app.post('/transaction', (req, res) => {
     let violations = [];  
 
 
-    // Comprobación de tarjeta activa
+    // Check for active card.
     if (!account.activeCard) {
         
         violations.push("card-not-active");
     }
 
-    // Comprobación de transacción duplicada
+    // Check for duplicate transaction.
     if (checkDoubledTransaction(merchant, transactionAmount, time)) {
        
         violations.push("doubled-transaction");
     }
 
-    // Comprobación de alta frecuencia de transacciones
+    // Check for high frequency of transactions.
     if (checkFrequency({ merchant, amount: transactionAmount, time: transactionTime.toISOString() })) {
        
         violations.push("high-frequency-small-interval");
     }
 
-    // Comprobación de límite insuficiente
+    // Check for insufficient limit.
     if (transactionAmount > account.availableLimit) {
        
         violations.push("insufficient-limit");
     }
 
-    // Procesar la transacción si no hay violaciones
+    // Process the transaction if there are no violations.
     if (violations.length === 0) {
 
         account.availableLimit -= transactionAmount;
@@ -115,7 +114,7 @@ app.post('/transaction', (req, res) => {
 
         return res.status(201).json({ account, violations: [] });
     } else {
-        // Retornar todas las violaciones 
+        // Return all violations.
         return res.status(400).json({ account, violations: [] });
     }
 });
