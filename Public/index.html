@@ -60,7 +60,7 @@
 </html>
 
 <script>
-       
+       // Button click event handler to create an account using an API endpoint
        $('#createAccountForm').submit(function(event) {
             event.preventDefault();
             const activeCard = $('#activeCard').is(':checked');
@@ -71,15 +71,12 @@
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ activeCard, availableLimit }),
-                success: function(data) {
-                    console.log(data);
+                success: function(data) { //Result of success
+                
                     var acc = data.account.activeCard;
-                    
-                    console.log("que trae acc");
-                    console.log(acc);
+        
                     if (acc == true){
-                        alert(" Tarjeta activa, puedes continuar ");
-                        $('#transactionForm').show(); 
+                        alert(" account-initialized ");
                     }
                    
                 },
@@ -87,15 +84,16 @@
                     var violation = jqXHR.responseJSON.violations;
 
                     if (violation == 'account-already-initialized'){
-                        alert(' Cuenta ya ha sido Inicializada ');
+                        alert('account-already-initialized');
                     }
                     
-                    console.log(violation);
+                    
                 }
             });
         });
 
 
+       // Button click event handler to make a transaction via an API endpoint
         $('#transactionForm').submit(function(event) {
             event.preventDefault();
             const merchant = $('#merchant').val();
@@ -117,7 +115,7 @@
                     console.log(data);
                     var cardLimit = data.account.availableLimit;
                    
-                    alert(`Mercancía registrada, tienes límite de ${cardLimit}`);
+                    alert(`Success, card limit left:  ${cardLimit}`);
                     
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

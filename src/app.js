@@ -42,7 +42,7 @@ function checkFrequency(transaction) {
 // Function to detect duplicate transactions.
 function checkDoubledTransaction(merchant, amount, time) {
     const transactionTime = new Date(time);
-    const twoMinutesAgo = new Date(transactionTime.getTime() - 2 * 60 * 1000); // Dos minutos antes
+    const twoMinutesAgo = new Date(transactionTime.getTime() - 2 * 60 * 1000); 
 
     return transactions.some(t => {
         const pastTransactionTime = new Date(t.time);
