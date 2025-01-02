@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <title>Bank Account Management</title>
+    <title>Authorizer</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Bank Account Management</h1>
+        <h1 class="mb-4">Authorizer</h1>
 
         <!-- Formulario de Creación de Cuenta -->
         <div class="card mb-4">
@@ -38,7 +38,7 @@
                 <h2>Submit Transaction</h2>
             </div>
             <div class="card-body">
-                <form id="transactionForm" style="display:none;">
+                <form id="transactionForm">
                     <div class="form-group">
                         <label>Merchant:</label>
                         <input type="text" id="merchant" name="merchant" placeholder="Enter merchant" class="form-control">
@@ -73,11 +73,24 @@
                 data: JSON.stringify({ activeCard, availableLimit }),
                 success: function(data) {
                     console.log(data);
-                    $('#transactionForm').show(); 
+                    var acc = data.account.activeCard;
+                    
+                    console.log("que trae acc");
+                    console.log(acc);
+                    if (acc == true){
+                        alert(" Tarjeta activa, puedes continuar ");
+                        $('#transactionForm').show(); 
+                    }
+                   
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                   
-                    console.log(jqXHR.responseText);
+                    var violation = jqXHR.responseJSON.violations;
+
+                    if (violation == 'account-already-initialized'){
+                        alert(' Cuenta ya ha sido Inicializada ');
+                    }
+                    
+                    console.log(violation);
                 }
             });
         });
@@ -102,9 +115,19 @@
                 }),
                 success: function(data) {
                     console.log(data);
+                    var cardLimit = data.account.availableLimit;
+                   
+                    alert(`Mercancía registrada, tienes límite de ${cardLimit}`);
+                    
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR.responseText);
+                    console.log(jqXHR.responseJSON.violations);
+                    var violation = jqXHR.responseJSON.violations;
+                   
+                    if (violation){
+                        var formattedViolations = violation.join(',  ');
+                        alert(`Violation detected: ${formattedViolations}`);
+                    }
                 }
             });
         });

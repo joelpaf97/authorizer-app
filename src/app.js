@@ -6,7 +6,14 @@ const app = express();
 
 app.use(cors());  
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'Public')));
+// Sube un nivel desde src y accede a Public
+app.use(express.static(path.join(__dirname, '..', 'Public')));
+
+// Enviar index.html cuando se accede a la raíz
+app.get('/', (req, res) => {
+    // Ajusta la ruta para enviar index.html desde Public
+    res.sendFile(path.join(__dirname, '..', 'Public', 'index.html'));
+});
 
 
 let account = null; // Stores the bank account information.
@@ -52,7 +59,7 @@ app.post('/create-account', (req, res) => {
    
     if (account) {
        
-        return res.status(400).json({ violations: ["account-already-initialized"] });
+        return res.status(400).json({ account, violations: ["account-already-initialized"] });
     }
 
     const { activeCard, availableLimit } = req.body;
@@ -72,7 +79,7 @@ app.post('/create-account', (req, res) => {
 app.post('/transaction', (req, res) => {
 
     if (!account) {
-        return res.status(404).json({ violations: ["account-not-initialized"] });
+        return res.status(404).json({ account, violations: ["account-not-initialized"] });
     }
 
     const { merchant, amount, time } = req.body.transaction;
@@ -87,22 +94,27 @@ app.post('/transaction', (req, res) => {
         violations.push("card-not-active");
     }
 
-    // Check for duplicate transaction.
-    if (checkDoubledTransaction(merchant, transactionAmount, time)) {
-       
-        violations.push("doubled-transaction");
-    }
-
     // Check for high frequency of transactions.
     if (checkFrequency({ merchant, amount: transactionAmount, time: transactionTime.toISOString() })) {
        
         violations.push("high-frequency-small-interval");
+        //return res.status(201).json({ account, violations: ["high-frequency-small-interval"] });
     }
 
+    // Check for duplicate transaction.
+    if (checkDoubledTransaction(merchant, transactionAmount, time)) {
+       
+        violations.push("doubled-transaction");
+        //return res.status(201).json({ account, violations: ["doubled-transaction"] });
+        
+    }
+
+    
     // Check for insufficient limit.
     if (transactionAmount > account.availableLimit) {
        
         violations.push("insufficient-limit");
+        //return res.status(201).json({ account, violations: ["insufficient-limit"] });
     }
 
     // Process the transaction if there are no violations.
@@ -115,7 +127,7 @@ app.post('/transaction', (req, res) => {
         return res.status(201).json({ account, violations: [] });
     } else {
         // Return all violations.
-        return res.status(400).json({ account, violations: [] });
+        return res.status(400).json({ account, violations });
     }
 });
 

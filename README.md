@@ -14,6 +14,16 @@ To run this application, you will need the following software installed on your 
 
 Before launching the application, you need to install the required dependencies. 
 
+You need to navigate to the root directory of the project where is located. Open a terminal window and use the cd command to change directories:
+
+For example if you cloned the project on your Documents
+here is the path you need (FOR WINDOWS)
+
+cd C:\Users\joelp\Documents\authorizer-app
+
+(EXAMPLE PATH FOR MACOS)
+cd ~/Documents/authorizer-app
+
 Open a terminal in your project directory and run the following command:
 
 npm install
@@ -23,6 +33,16 @@ When the installation finished, run the next command:
 npm install express
 
 *Starting the Application*
+
+First you need to navigate to the root directory of the project where the app.js file is located. Open a terminal window and use the cd command to change directories:
+
+For example if you cloned the project on your Documents
+here is the path you need to location:  (FOR WINDOWS)
+
+cd C:\Users\joelp\Documents\authorizer-app\src
+
+(EXAMPLE PATH FOR MACOS)
+cd ~/Documents/authorizer-app/src
 
 To start the application, execute the following command in the terminal:
 
